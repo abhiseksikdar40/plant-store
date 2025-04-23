@@ -120,7 +120,7 @@ export default function Home() {
     </div>
     <div>
     <p style={{ fontFamily: 'Lilita One' }} className="small mb-3">Whether you're a seasoned plant lover or just getting started <br/> we've got something for you.</p>
-          <Link className="btn btn-light border mt-3">
+          <Link to='/products' className="btn btn-light border mt-3">
             Explore
             <img className='ps-2' src="/right-arrow.png" alt="Right Arrow" style={{ height: '15px' }} />
           </Link>

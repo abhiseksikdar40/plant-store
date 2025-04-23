@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import '../index.css';
+import WishlistCounter from './WishlistCounter';
+import CartCounter from './CartCounter';
 
 export default function Header() {
   return (
@@ -10,16 +12,26 @@ export default function Header() {
           <Link className="navbar-brand fw-bold" to="/" style={{fontFamily: "Cinzel"}}>
             PLANTHEAVENS
           </Link>
+          <Link className="nav-link align-items-start pt-1" to="/">Home</Link>
           <a className="nav-link align-items-start pt-1" href="#ProductSection">Products</a>
           <a className="nav-link align-items-start pt-1" href="#AboutUs">About</a>
         </div>
 
-        <div className="d-flex gap-3">
-          <Link to="/wishlist">
+        <div className="d-flex align-items-center gap-4">
+        <div className='position-relative'>
+        <Link to="/wishlist">
             <img src="/favorite.png" alt="Wishlist" />
           </Link>
-          <Link to="/cart" className="px-4"><img src="/shopping-cart.png" alt="Shopping-Cart" style={{height: "22px"}} /></Link>
+          <WishlistCounter />
+            </div>
+          
+         <div className='position-relative px-2'>
+         <Link to="/cart"><img src="/shopping-cart.png" alt="Shopping-Cart" style={{height: "22px"}} /></Link>
+         <CartCounter />
+         </div>
+         <div>
           <Link to="/user"><img src="/person.png" alt="User-Profile" /></Link>
+          </div>
         </div>
       </div>
     </nav>

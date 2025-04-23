@@ -6,6 +6,7 @@ import Wishlist from './pages/Wishlist';
 import User from './pages/User';
 import Home from './pages/Home';
 import Footer from './components/Footer';
+import ProductList from './pages/ProductList';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/user" element={<User />} />
+        <Route path='/products' element={<ProductList />} />
       </Routes>
       <Footer />
     </BrowserRouter>
