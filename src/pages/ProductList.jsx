@@ -52,7 +52,7 @@
                <img style={{borderRadius: "0px"}} src="https://placehold.co/150" className="card-img-top" alt="..."/>
                </div>
                 <div className="card-body text-center">
-                    <h5 className="card-title">Product Name</h5>
+                    <Link className='nav-link' to='/product'><h5 className="card-title">Product Name</h5></Link>
                     <p className="card-text">$Price</p>
                     <div className="d-flex justify-content-between">
                     <Link className='btn btn-success'>Buy Now</Link>

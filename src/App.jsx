@@ -7,9 +7,12 @@ import User from './pages/User';
 import Home from './pages/Home';
 import Footer from './components/Footer';
 import ProductList from './pages/ProductList';
+import Product from './pages/Product';
+import { StoreProvider } from './context/StoreContext';
 
 function App() {
   return (
+    <StoreProvider>
     <BrowserRouter>
       <Header />
       <Routes>
@@ -17,10 +20,12 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/user" element={<User />} />
-        <Route path='/products' element={<ProductList />} />
+        <Route path='/productsList' element={<ProductList />} />
+        <Route path='/product' element={<Product />}/>
       </Routes>
       <Footer />
     </BrowserRouter>
+    </StoreProvider>
   );
 }
 
