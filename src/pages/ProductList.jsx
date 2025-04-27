@@ -1,5 +1,9 @@
     import { Link } from 'react-router-dom'
+import useStoreContext from '../context/StoreContext'
     export default function ProductList () {
+
+        const { useFetch } = useStoreContext()
+        const { data, loading, error } = useFetch('https://plant-store-backend-two.vercel.app/products')
 
         return (
             <>
@@ -42,25 +46,31 @@
             </div>
             <div className="col-md-9 my-5" style={{backgroundColor: '#f2f8f8'}}>
                 <div className='py-3'>
-                <span className='fw-bold'>Showing All Products</span> <span>(Showing #Numbers# products)</span>
+                <span className='fw-bold'>Showing All Products</span> <span>(Showing {data?.length} products)</span>
                 </div>
             <div className="row">
-                <div className="col-md-3 my-3">
-                <div className="card" style={{width: "250px", borderRadius: "0px"}}>
-               <div className='position-relative'>
-                <button style={{background: "transparent", border: "none" }} className='position-absolute top-0 end-0 p-2'><img style={{height: "29px", backgroundColor: "#FFFFFF", borderRadius: "15px", padding: "7px 5px 5px 5px"}} src="/favorite.png" alt="wishlist" /></button>
-               <img style={{borderRadius: "0px"}} src="https://placehold.co/150" className="card-img-top" alt="..."/>
-               </div>
-                <div className="card-body text-center">
-                    <Link className='nav-link' to='/product'><h5 className="card-title">Product Name</h5></Link>
-                    <p className="card-text">$Price</p>
-                    <div className="d-flex justify-content-between">
-                    <Link className='btn btn-success'>Buy Now</Link>
-                    <button className='btn btn-warning'>Add To Cart</button>
+                            {data && data.map(product => (
+                <div className="col-md-3 my-3" key={product._id}>
+                    <div className="card" style={{width: "250px", borderRadius: "0px"}}>
+                    <div className='position-relative'>
+                        <button style={{background: "transparent", border: "none"}} className='position-absolute top-0 end-0 p-2'>
+                        <img style={{height: "29px", backgroundColor: "#FFFFFF", borderRadius: "15px", padding: "7px 5px 5px 5px"}} src="/favorite.png" alt="wishlist" />
+                        </button>
+                        <img style={{borderRadius: "0px", overflow: "hidden", height: "230px"}} src={product.productImg} className="card-img-top" alt={product.productName}/>
+                    </div>
+                    <div className="card-body text-center">
+                        <Link className='nav-link' to={`/products/${product._id}`}>
+                        <p className="card-title">{product.productName}</p>
+                        </Link>
+                        <p className="card-text">${product.productPrice}</p>
+                        <div className="d-flex justify-content-between">
+                        <Link className='btn btn-success'>Buy Now</Link>
+                        <button className='btn btn-warning'>Add To Cart</button>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-                </div>
-                </div>
-            </div>
+                ))}
             </div>
             </div>
             </div>
