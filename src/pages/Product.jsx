@@ -31,7 +31,7 @@ export default function Product () {
             <div className="card" style={{width: "255px", borderRadius: "0px"}}>
                <div className='position-relative'>
                 <button style={{background: "transparent", border: "none" }} className='position-absolute top-0 end-0 p-2'><img style={{height: "32px", backgroundColor: "#FFFFFF", borderRadius: "17px", padding: "5px 4px 2px 4px"}} src="/favorite.png" alt="wishlist" /></button>
-               <img style={{borderRadius: "0px"}} src={product.productImg} className="card-img-top" alt={product.productName}/>
+               <img style={{borderRadius: "0px", height: "300px", objectFit: "fill", overflow: "hidden"}} src={product.productImg} className="card-img-top" alt={product.productName}/>
                </div>
                 </div>
                 <Link className='btn btn-success my-2' style={{borderRadius: "0px", width: "255px"}}>Buy Now</Link>

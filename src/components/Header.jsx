@@ -13,7 +13,7 @@ export default function Header() {
             PLANTHEAVENS
           </Link>
           <Link className="nav-link align-items-start pt-1" to="/">Home</Link>
-          <a className="nav-link align-items-start pt-1" href="#ProductSection">Products</a>
+          <Link className="nav-link align-items-start pt-1" to='/productsList'>Products</Link>
           <a className="nav-link align-items-start pt-1" href="#AboutUs">About</a>
         </div>
 
