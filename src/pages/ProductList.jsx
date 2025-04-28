@@ -59,7 +59,7 @@ import useStoreContext from '../context/StoreContext'
                         <img style={{borderRadius: "0px", overflow: "hidden", height: "230px"}} src={product.productImg} className="card-img-top" alt={product.productName}/>
                     </div>
                     <div className="card-body text-center">
-                        <Link className='nav-link' to={`/products/${product._id}`}>
+                        <Link className='nav-link' to={`/productsList/${product._id}`}>
                         <p className="card-title">{product.productName}</p>
                         </Link>
                         <p className="card-text">${product.productPrice}</p>

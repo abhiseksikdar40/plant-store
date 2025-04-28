@@ -1,32 +1,93 @@
-import { Link } from "react-router-dom"
+import { useState } from "react"
+import { Link, useParams } from "react-router-dom"
 export default function Product () {
+  const { productId } = useParams()
+  const [ product, setProduct ] = useState()
+
+  const getProductDetails = async () => {
+      try {
+        const response = await fetch(`https://plant-store-backend-two.vercel.app/products/${productId}`)
+
+        if(!response.ok){
+          throw 'Product Not Found.'
+        }
+
+        const productData = await response.json()
+        setProduct(productData)
+      } catch (error) {
+        console.log("Failed To Fetch Product Details!", error)
+      }
+  }
+
+  getProductDetails()
 
     return (
         <>
         <div className="container my-5 py-3" style={{backgroundColor: "#f2f8f8"}}>
             <div className="row py-4">
-            <div className="col-md-4 ps-5">
+            {product && (
+              <>
+                <div className="col-md-4 ps-5">
             <div className="card" style={{width: "255px", borderRadius: "0px"}}>
                <div className='position-relative'>
                 <button style={{background: "transparent", border: "none" }} className='position-absolute top-0 end-0 p-2'><img style={{height: "32px", backgroundColor: "#FFFFFF", borderRadius: "17px", padding: "5px 4px 2px 4px"}} src="/favorite.png" alt="wishlist" /></button>
-               <img style={{borderRadius: "0px"}} src="https://placehold.co/150" className="card-img-top" alt="..."/>
+               <img style={{borderRadius: "0px"}} src={product.productImg} className="card-img-top" alt={product.productName}/>
                </div>
-                <div className="card-body text-center">
-                    <h5 className="card-title">Product Name</h5>
-                    <p className="card-text">$Price</p>
-                </div>
                 </div>
                 <Link className='btn btn-success my-2' style={{borderRadius: "0px", width: "255px"}}>Buy Now</Link>
                 <button className='btn btn-primary my-2' style={{borderRadius: "0px", width: "255px"}}>Move To Cart</button>
             </div>
             <div className="col-md-8">
-                <h4>Product Name</h4>
-                <p>Reviews</p>
-                <span className="fw-bold">Discounted Price</span> <span>#MRP#</span>
-                <p>Discount Percentage</p>
-                <span className="fw-bold">Quatity:</span> <span><button>-</button> <input type="number" name="" id="" style={{width: "30px"}} /> <button>+</button></span><br/>
-                <span className="fw-bold">Size:</span>
-                <div className="border border-1"></div>
+                <h4>{product.productName}</h4>
+                <span>{product.productRating}</span><br/>
+                <span className="fw-bold">${product.productPrice - (product.productPrice * product.productDiscount)/ 100}</span> <span className="fw-bold text-muted ps-2" style={{ textDecoration: "line-through" }}>${product.productPrice}</span><br/>
+                <span className="fw-bold">{product.productDiscount}% OFF</span><br/>
+                <span className="fw-bold">Quantity: </span> 
+                  <span className="d-inline-flex align-items-center gap-2">
+                    <button 
+                      style={{
+                        width: "30px", 
+                        height: "30px", 
+                        borderRadius: "50%", 
+                        backgroundColor: "transparent", 
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        paddingBottom: "3px"
+                      }}
+                    >
+                      -
+                    </button>
+
+                    <input 
+                      type="number" 
+                      min={1} 
+                      defaultValue={1}
+                      style={{
+                        width: "30px", 
+                        height: "30px", 
+                        textAlign: "center", 
+                        border: "1px solid black",
+                        borderRadius: "5px",
+                        padding: "0",
+                        fontSize: "16px",
+                      }} 
+                    />
+
+                    <button 
+                      style={{
+                        width: "30px", 
+                        height: "30px", 
+                        borderRadius: "50%", 
+                        backgroundColor: "transparent", 
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        paddingBottom: "3px"
+                      }}
+                    >+
+                    </button>
+                  </span>
+                  <br/>
+                <div className="border border-1 mt-3"></div>
 
                 <div className='row my-3'>
           <div className='col-md-3 text-center'>
@@ -50,8 +111,10 @@ export default function Product () {
         <div className="border border-2"></div>
 
             <p className="pt-3 fw-bold">Description:</p>
-            <p> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Temporibus illum dolore incidunt quae ducimus recusandae inventore magni ipsam ullam, quam eligendi laudantium, enim saepe impedit reiciendis, quia quisquam ea a. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio quam quibusdam quaerat sint, laudantium consequatur amet reiciendis similique aut eius nemo quod a ipsa facere, possimus vero iure, fugiat doloremque. </p>
+            <p>{product.productDescription}</p>
             </div>
+              </>
+            )}
             </div>
             <div className="border border-1"></div>
 
@@ -97,8 +160,8 @@ export default function Product () {
             />
           </div>
           <div className="card-body text-center">
-            <Link className="nav-link"><h5 className="card-title">Product Name</h5></Link>
-            <p className="card-text">$Price</p>
+            <Link className="nav-link"  to={`/product/${item._id}`}><h5 className="card-title">Product Name</h5></Link>
+            <p className="card-text">ProductPrice</p>
           </div>
           <button className="btn btn-primary w-100 rounded-0">
             Add To Cart
