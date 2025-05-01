@@ -3,16 +3,14 @@ import useStoreContext from '../context/StoreContext'
 import { useState, useEffect } from 'react'
 
 export default function ProductList() {
-    const { useFetch } = useStoreContext()
+    const { useFetch, addToCart } = useStoreContext()
     const { data, loading, error } = useFetch('https://plant-store-backend-two.vercel.app/products')
     const [sortOption, setSortOption] = useState("Price -- Low to High")
     const [sortedData, setSortedData] = useState([])
     const [selectedCategories, setSelectedCategories] = useState([]);
-    const [selectedRating, setSelectedRating] = useState(null);
-
 
   
-    const sortProducts = (sortOption, products, selectedCategories, selectedRating) => {
+    const sortProducts = (sortOption, products, selectedCategories) => {
         let sorted = [...products];
     
         // filter by category
@@ -35,10 +33,10 @@ export default function ProductList() {
 
     useEffect(() => {
         if (data) {
-            const sorted = sortProducts(sortOption, data, selectedCategories, selectedRating);
+            const sorted = sortProducts(sortOption, data, selectedCategories);
             setSortedData(sorted);
         }
-    }, [sortOption, data, selectedCategories, selectedRating]);
+    }, [sortOption, data, selectedCategories]);
     
 
     const handleByPriceAndRating = (e) => {
@@ -95,15 +93,6 @@ export default function ProductList() {
                                 <input type="checkbox" id="categoryOfPlantAccessories" onChange={handleCategoryChange} value="Plant Accessories" /> <label htmlFor="categoryOfPlantAccessories">Plant Accessories</label><br />
                                 <input type="checkbox" id="categoryOfArtificialPlants" onChange={handleCategoryChange} value="Artificial Plants" /> <label htmlFor="categoryOfArtificialPlants">Artificial Plants</label><br />
                             </div>
-
-                            {/* get product by rating */}
-                            <div className="p-3">
-                                <label className="form-label fw-bold">Rating</label><br />
-                                <input type="radio" name="sortByRating" id="4StarAndAbove" /> <label htmlFor="4StarAndAbove">4 Stars & Above</label><br />
-                                <input type="radio" name="sortByRating" id="3StarAndAbove"  /> <label htmlFor="3StarAndAbove">3 Stars & Above</label><br />
-                                <input type="radio" name="sortByRating" id="2StarAndAbove"  /> <label htmlFor="2StarAndAbove">2 Stars & Above</label><br />
-                                <input type="radio" name="sortByRating" id="1StarAndAbove" /> <label htmlFor="1StarAndAbove">1 Star & Above</label><br />
-                            </div>
                         </form>
                     </div>
 
@@ -129,7 +118,7 @@ export default function ProductList() {
                                             <p className="card-text">${product.productPrice}</p>
                                             <div className="d-flex justify-content-between">
                                                 <Link className='btn btn-success'>Buy Now</Link>
-                                                <button className='btn btn-warning'>Add To Cart</button>
+                                                <button className='btn btn-warning' onClick={() => addToCart(product)}>Add To Cart</button>
                                             </div>
                                         </div>
                                     </div>
