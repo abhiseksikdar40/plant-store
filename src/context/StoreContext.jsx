@@ -46,7 +46,7 @@ export function StoreProvider({ children }) {
       const response = await fetch("https://plant-store-backend-two.vercel.app/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product._id, quantity: 1 }),
+        body: JSON.stringify({ product: product._id, quantity: 1 }),
       });
 
       const result = await response.json();
