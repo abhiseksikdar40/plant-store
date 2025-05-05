@@ -1,7 +1,7 @@
 import useStoreContext from "../context/StoreContext";
 
 export default function Cart() {
-    const { cart } = useStoreContext();
+    const { cart, cartDelete } = useStoreContext();
 
     // Calculate the total price of all items in the cart
     const totalPrice = cart.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
@@ -60,6 +60,7 @@ export default function Cart() {
                                                     <button
                                                         className="btn btn-danger mt-3"
                                                         style={{ borderRadius: "0px", width: "255px" }}
+                                                        onClick={() => cartDelete(cart)}
                                                     >
                                                         Remove From Cart
                                                     </button>

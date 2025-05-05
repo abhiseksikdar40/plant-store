@@ -57,9 +57,32 @@ export function StoreProvider({ children }) {
     }
   };
 
+  const cartDelete = async (deleteProduct) => {
+  
+    setCart((prev) => prev.filter((item) => item._id !== deleteProduct._id));
+  
+    try {
+      const response = await fetch(
+        `https://plant-store-backend-two.vercel.app/cart/${deleteProduct._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+  
+      const result = await response.json();
+  
+      if (!response.ok) throw "Delete failed"
+  
+      console.log("Deleted from backend:", result);
+    } catch (error) {
+      console.error("cart-delete failed:", error.message);
+    }
+  };
+  
+
 
   return (
-    <StoreContext.Provider value={{ useFetch, cart, addToCart }}>
+    <StoreContext.Provider value={{ useFetch, cart, addToCart, cartDelete }}>
       {children}
     </StoreContext.Provider>
   );
