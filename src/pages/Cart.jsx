@@ -60,7 +60,7 @@ export default function Cart() {
                                                     <button
                                                         className="btn btn-danger mt-3"
                                                         style={{ borderRadius: "0px", width: "255px" }}
-                                                        onClick={() => cartDelete(cart)}
+                                                        onClick={() => cartDelete(item._id)}
                                                     >
                                                         Remove From Cart
                                                     </button>

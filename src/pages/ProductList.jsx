@@ -7,9 +7,14 @@ export default function ProductList() {
     const { data, loading, error } = useFetch('https://plant-store-backend-two.vercel.app/products')
     const [sortOption, setSortOption] = useState("Price -- Low to High")
     const [sortedData, setSortedData] = useState([])
-    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([])
 
-  
+    const clearSelect = (e) => {
+        e.preventDefault();
+        setSortOption("Price -- Low to High");
+        setSelectedCategories([]);
+    }
+
     const sortProducts = (sortOption, products, selectedCategories) => {
         let sorted = [...products];
     
@@ -37,12 +42,10 @@ export default function ProductList() {
             setSortedData(sorted);
         }
     }, [sortOption, data, selectedCategories]);
-    
 
     const handleByPriceAndRating = (e) => {
-        setSortOption(e.target.value)
+        setSortOption(e.target.value);
     }
-
 
     const handleCategoryChange = (e) => {
         const category = e.target.value;
@@ -52,20 +55,25 @@ export default function ProductList() {
             setSelectedCategories(selectedCategories.filter(categ => categ !== category));
         }
     };
-    
-    
 
     return (
         <>
+        {loading ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
+                <div className="spinner-border text-success" style={{ width: "3rem", height: "3rem" }}>
+                </div>
+                <span className='px-2'>Loading...</span>
+            </div>
+        ) : (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-2 my-5" style={{ margin: "0 85px 0 10px" }}>
-                        <form>
+                        <form className='sticky-top'>
                             <div className="d-flex justify-content-between">
                                 <span className="fw-bold">Filters</span>
-                                <a href="#" className="text-dark">Clear</a>
+                                <a href="#" className="text-dark" onClick={clearSelect}>Clear</a>
                             </div>
-                            {/* get product by price */}
+                            {/* Price Filter */}
                             <div className="p-3">
                                 <label className="form-label fw-bold">Price</label><br />
                                 <input
@@ -73,6 +81,7 @@ export default function ProductList() {
                                     name="sortByPrice"
                                     id="priceLowToHigh"
                                     value="Price -- Low to High"
+                                    checked={sortOption === "Price -- Low to High"}
                                     onChange={handleByPriceAndRating}
                                 /> <label htmlFor="priceLowToHigh">Price -- Low to High</label><br />
                                 <input
@@ -80,23 +89,49 @@ export default function ProductList() {
                                     name="sortByPrice"
                                     id="priceHighToLow"
                                     value="Price -- High to Low"
+                                    checked={sortOption === "Price -- High to Low"}
                                     onChange={handleByPriceAndRating}
                                 /> <label htmlFor="priceHighToLow">Price -- High to Low</label><br />
-                                <input type="radio" name="sortByPrice" id="priceByPopularity" value="Popularity" onChange={handleByPriceAndRating} />
+                                <input
+                                    type="radio"
+                                    name="sortByPrice"
+                                    id="priceByPopularity"
+                                    value="Popularity"
+                                    checked={sortOption === "Popularity"}
+                                    onChange={handleByPriceAndRating}
+                                />
                                 <label htmlFor="priceByPopularity">Popularity</label><br />
                             </div>
 
-                            {/* get product by category */}
+                            {/* Category Filter */}
                             <div className="p-3">
                                 <label className="form-label fw-bold">Category</label><br />
-                                <input type="checkbox" id="categoryOfNaturalPlants" onChange={handleCategoryChange} value="Natural Plants" /> <label htmlFor="categoryOfNaturalPlants">Natural Plants</label><br />
-                                <input type="checkbox" id="categoryOfPlantAccessories" onChange={handleCategoryChange} value="Plant Accessories" /> <label htmlFor="categoryOfPlantAccessories">Plant Accessories</label><br />
-                                <input type="checkbox" id="categoryOfArtificialPlants" onChange={handleCategoryChange} value="Artificial Plants" /> <label htmlFor="categoryOfArtificialPlants">Artificial Plants</label><br />
+                                <input
+                                    type="checkbox"
+                                    id="categoryOfNaturalPlants"
+                                    value="Natural Plants"
+                                    checked={selectedCategories.includes("Natural Plants")}
+                                    onChange={handleCategoryChange}
+                                /> <label htmlFor="categoryOfNaturalPlants">Natural Plants</label><br />
+                                <input
+                                    type="checkbox"
+                                    id="categoryOfPlantAccessories"
+                                    value="Plant Accessories"
+                                    checked={selectedCategories.includes("Plant Accessories")}
+                                    onChange={handleCategoryChange}
+                                /> <label htmlFor="categoryOfPlantAccessories">Plant Accessories</label><br />
+                                <input
+                                    type="checkbox"
+                                    id="categoryOfArtificialPlants"
+                                    value="Artificial Plants"
+                                    checked={selectedCategories.includes("Artificial Plants")}
+                                    onChange={handleCategoryChange}
+                                /> <label htmlFor="categoryOfArtificialPlants">Artificial Plants</label><br />
                             </div>
                         </form>
                     </div>
 
-                    {/* displaying all products here */}
+                    {/* Products Display */}
                     <div className="col-md-9 my-5" style={{ backgroundColor: '#f2f8f8' }}>
                         <div className='py-3'>
                             <span className='fw-bold'>Showing All Products</span> <span>(Showing {sortedData?.length} products)</span>
@@ -128,6 +163,7 @@ export default function ProductList() {
                     </div>
                 </div>
             </div>
+        )}
         </>
     )
 }
