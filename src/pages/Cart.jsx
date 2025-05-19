@@ -2,6 +2,7 @@ import useStoreContext from "../context/StoreContext";
 
 export default function Cart() {
     const { cart, cartDelete } = useStoreContext();
+    console.log(cart)
 
     // Calculate the total price of all items in the cart
     const totalPrice = cart.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
