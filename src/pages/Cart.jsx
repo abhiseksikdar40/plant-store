@@ -23,10 +23,8 @@ export default function Cart() {
                 <div className="d-flex justify-content-evenly">
                     {/* Cart Items */}
                     <div style={{ width: "60%" }}>
-                        {cart.length === 0 ? (
-                            <h5 className="text-center">🛒 Your cart is empty</h5>
-                        ) : (
-                            cart.map((item) => (
+                        {cart ?  (
+                            cart?.map((item) => (
                                 <div className="card mb-3" key={item._id}>
                                     <div className="row g-0">
                                         <div className="col-md-4">
@@ -76,6 +74,8 @@ export default function Cart() {
                                     </div>
                                 </div>
                             ))
+                        ) : (
+                            <h5 className="text-center">🛒 Your cart is empty</h5>
                         )}
                     </div>
 

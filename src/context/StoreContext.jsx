@@ -51,6 +51,11 @@ export function StoreProvider({ children }) {
     fetchCartData();
   }, []);
 
+  // Fetch products list
+  const { data: products, loading: loadingProducts, error: productsError } = useFetch(
+    "https://plant-store-backend-two.vercel.app/products"
+  );
+
   // Add to Cart
   const addToCart = async (product, quantity = 1) => {
     setCart((prev) => {
@@ -74,7 +79,7 @@ export function StoreProvider({ children }) {
       });
 
       const result = await response.json();
-      if (!response.ok) throw "Add to cart failed";
+      if (!response.ok) throw new Error("Add to cart failed");
       console.log("Added to cart in backend:", result);
     } catch (error) {
       setCartError(error.message);
@@ -89,7 +94,7 @@ export function StoreProvider({ children }) {
     try {
       const response = await fetch(`https://plant-store-backend-two.vercel.app/cart/${cartItemId}`, { method: "DELETE" });
       const result = await response.json();
-      if (!response.ok) throw "Delete from cart failed";
+      if (!response.ok) throw new Error("Delete from cart failed");
       console.log("Deleted from backend:", result);
     } catch (error) {
       setCartError(error.message);
@@ -108,7 +113,7 @@ export function StoreProvider({ children }) {
         body: JSON.stringify(newAddress),
       });
 
-      if (!response.ok) throw "Address saving failed";
+      if (!response.ok) throw new Error("Address saving failed");
       console.log("Address saved to backend:", newAddress);
     } catch (error) {
       setAddressError(error.message);
@@ -129,7 +134,7 @@ export function StoreProvider({ children }) {
         body: JSON.stringify(updatedAddress),
       });
 
-      if (!response.ok) throw "Address update failed";
+      if (!response.ok) throw new Error("Address update failed");
       console.log("Address updated in backend:", updatedAddress);
     } catch (error) {
       setAddressError(error.message);
@@ -144,11 +149,11 @@ export function StoreProvider({ children }) {
     setAddress((prev) => (prev && prev._id === addressId ? null : prev));
 
     try {
-      const response = await fetch(`https://plant-store-backend-two.vercel.app/address//delete/${addressId}`, {
+      const response = await fetch(`https://plant-store-backend-two.vercel.app/address/delete/${addressId}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw "Delete address failed";
+      if (!response.ok) throw new Error("Delete address failed");
 
       console.log("Address deleted from backend:", addressId);
     } catch (error) {
@@ -160,16 +165,17 @@ export function StoreProvider({ children }) {
   return (
     <StoreContext.Provider
       value={{
-        useFetch,
         cart,
         addToCart,
+        loadingCart,
         cartDelete,
         address,
-        addressLoading,
-        addressError,
         setUserAddress,
         updateAddress,
         deleteAddress,
+        products,
+        loadingProducts,
+        productsError,
       }}
     >
       {children}
