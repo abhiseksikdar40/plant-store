@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom'
 import useStoreContext from '../context/StoreContext'
 import { useState, useEffect } from 'react'
+import { useFetch } from '../context/StoreContext'
 
 export default function ProductList() {
-    const { useFetch, addToCart } = useStoreContext()
+    const { addToCart } = useStoreContext()
     const { data, loading, error } = useFetch('https://plant-store-backend-two.vercel.app/products')
     const [sortOption, setSortOption] = useState("Price -- Low to High")
     const [sortedData, setSortedData] = useState([])
     const [selectedCategories, setSelectedCategories] = useState([])
 
+    console.log(data)
     const clearSelect = (e) => {
         e.preventDefault();
         setSortOption("Price -- Low to High");

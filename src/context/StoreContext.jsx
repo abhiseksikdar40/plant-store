@@ -8,7 +8,7 @@ const useStoreContext = () => useContext(StoreContext);
 export default useStoreContext;
 
 // Custom fetch hook
-const useFetch = (url) => {
+export const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
