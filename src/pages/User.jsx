@@ -20,11 +20,6 @@ export default function User() {
         const response = await fetch("https://plant-store-backend-two.vercel.app/address");
         if (response.ok) {
           const addressData = await response.json();
-          // directly call setAddress from context instead of setUserAddress (which sends POST)
-          // assume setUserAddress here was misused
-          // update this:
-          // setUserAddress(addressData); ❌
-          // instead, use a setter you expose directly, or refresh the page state
           console.log("Fetched addresses:", addressData);
         } else {
           console.error("Failed to fetch address");
@@ -50,10 +45,10 @@ export default function User() {
 
     try {
       if (editingAddress) {
-        // 🔧 Updating address
+        //  Updating address
         await updateAddress({ ...newAddress, _id: editingAddress._id });
       } else {
-        // ➕ Adding new address
+        //  Adding new address
         await setUserAddress(newAddress);
       }
 

@@ -4,17 +4,17 @@ export default function Cart() {
   const { cart, cartDelete } = useStoreContext();
   console.log(cart);
 
-  // Safely parse numbers with fallback to 0
+  
   const safeNumber = (num) => (typeof num === "number" && !isNaN(num) ? num : 0);
 
-  // Calculate the total price of all items in the cart safely
+ 
   const totalPrice = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
     const quantity = safeNumber(item.quantity);
     return sum + price * quantity;
   }, 0);
 
-  // Calculate the total discount (sum of discounts for each item) safely
+  
   const totalDiscount = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
     const quantity = safeNumber(item.quantity);
