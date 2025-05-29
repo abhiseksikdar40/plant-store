@@ -124,7 +124,6 @@ export default function User() {
         {address && address.length > 0 ? (
           address.map((addr) => (
             <div key={addr._id} className="border border-4 my-3 p-3" style={{ width: "600px" }}>
-              <input type="radio" name="address" id={`address-${addr._id}`} />
               <span className="ms-2">
                 {addr.fullName} <br /> {addr.phoneNumber} <br />
                 {addr.houseNumber}, {addr.streetName}, {addr.cityName} <br /> {addr.pinCode}
