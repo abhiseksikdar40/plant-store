@@ -1,20 +1,19 @@
 import useStoreContext from "../context/StoreContext";
 
 export default function Cart() {
-  const { cart, cartDelete } = useStoreContext();
-  console.log(cart);
+  const { cart, cartDelete, updateCartItemQuantity } = useStoreContext();
 
   
   const safeNumber = (num) => (typeof num === "number" && !isNaN(num) ? num : 0);
 
- 
+
   const totalPrice = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
     const quantity = safeNumber(item.quantity);
     return sum + price * quantity;
   }, 0);
 
-  
+
   const totalDiscount = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
     const quantity = safeNumber(item.quantity);
@@ -59,14 +58,26 @@ export default function Cart() {
                             <p>Rating: {item.product?.productRating ?? "N/A"}</p>
                             <span className="fw-bold">Quantity:</span>{" "}
                             <span className="mx-2">
-                              <button>-</button>
+                              <button
+                                onClick={() =>
+                                  updateCartItemQuantity(item._id, Math.max(1, quantity - 1))
+                                }
+                              >
+                                -
+                              </button>
                               <input
                                 type="number"
                                 value={quantity}
                                 style={{ width: "40px", textAlign: "center" }}
                                 readOnly
                               />
-                              <button>+</button>
+                              <button
+                                onClick={() =>
+                                  updateCartItemQuantity(item._id, quantity + 1)
+                                }
+                              >
+                                +
+                              </button>
                             </span>
                             <br />
                             <span className="fw-bold">Discount:</span>{" "}
@@ -114,13 +125,19 @@ export default function Cart() {
             </div>
             <div className="d-flex justify-content-between">
               <h5>Delivery Charges</h5>
-              <h5>${delivery}</h5>
+              <h5>${delivery.toFixed(2)}</h5>
             </div>
             <hr />
-            <div className="d-flex justify-content-between fw-bold">
+            <div className="d-flex justify-content-between">
               <h4>Total Amount</h4>
               <h4>${finalAmount.toFixed(2)}</h4>
             </div>
+            <button
+              style={{ backgroundColor: "#19a448", border: "none" }}
+              className="btn text-white mt-3 w-100"
+            >
+              Proceed To Checkout
+            </button>
           </div>
         </div>
       </div>

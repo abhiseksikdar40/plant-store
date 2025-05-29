@@ -10,8 +10,6 @@ export const useStoreContext = () => {
   return context;
 };
 
-export default useStoreContext;
-
 // Custom fetch hook
 export const useFetch = (url) => {
   const [data, setData] = useState(null);
@@ -45,7 +43,7 @@ export function StoreProvider({ children }) {
     error: productsError,
   } = useFetch("https://plant-store-backend-two.vercel.app/products");
 
-  // ✅ Fetch address data (can be called manually or on mount)
+  // Fetch addresses
   const fetchAddresses = async () => {
     setAddressLoading(true);
     try {
@@ -63,12 +61,11 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // ✅ Fetch on component mount
   useEffect(() => {
     fetchAddresses();
   }, []);
 
-  // Fetch cart data on initial load
+  // Fetch cart data on mount
   useEffect(() => {
     const fetchCartData = async () => {
       setLoadingCart(true);
@@ -127,7 +124,34 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // ✅ Add new address and then fetch updated list
+  // Update Cart Item Quantity
+  const updateCartItemQuantity = async (cartItemId, newQuantity) => {
+    try {
+      const response = await fetch(
+        `https://plant-store-backend-two.vercel.app/cart/update/${cartItemId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: newQuantity }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Update cart quantity failed");
+
+      const updatedItem = await response.json();
+
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item._id === cartItemId ? { ...item, quantity: updatedItem.quantity } : item
+        )
+      );
+    } catch (error) {
+      setCartError(error.message);
+    }
+  };
+
+  // Address APIs (setUserAddress, updateAddress, deleteAddress)
+
   const setUserAddress = async (newAddress) => {
     setAddressLoading(true);
     try {
@@ -142,7 +166,7 @@ export function StoreProvider({ children }) {
 
       if (!response.ok) throw new Error("Address saving failed");
       await response.json();
-      await fetchAddresses(); // ✅ Refresh after add
+      await fetchAddresses();
     } catch (error) {
       setAddressError(error.message);
     } finally {
@@ -150,7 +174,6 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // ✅ Update address and then fetch updated list
   const updateAddress = async (updatedAddress) => {
     setAddressLoading(true);
     try {
@@ -165,7 +188,7 @@ export function StoreProvider({ children }) {
 
       if (!response.ok) throw new Error("Address update failed");
       await response.json();
-      await fetchAddresses(); // ✅ Refresh after update
+      await fetchAddresses();
     } catch (error) {
       setAddressError(error.message);
     } finally {
@@ -173,7 +196,6 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // ✅ Delete address and then fetch updated list
   const deleteAddress = async (addressId) => {
     try {
       const response = await fetch(
@@ -184,7 +206,7 @@ export function StoreProvider({ children }) {
       );
 
       if (!response.ok) throw new Error("Delete address failed");
-      await fetchAddresses(); // ✅ Refresh after delete
+      await fetchAddresses();
     } catch (error) {
       setAddressError(error.message);
     }
@@ -197,6 +219,7 @@ export function StoreProvider({ children }) {
         addToCart,
         loadingCart,
         cartDelete,
+        updateCartItemQuantity,
         address,
         setUserAddress,
         updateAddress,
@@ -204,7 +227,7 @@ export function StoreProvider({ children }) {
         products,
         loadingProducts,
         productsError,
-        fetchAddresses, 
+        fetchAddresses,
         addressLoading,
         addressError,
       }}
@@ -213,3 +236,5 @@ export function StoreProvider({ children }) {
     </StoreContext.Provider>
   );
 }
+
+export default useStoreContext;
