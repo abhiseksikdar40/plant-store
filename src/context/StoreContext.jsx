@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const StoreContext = createContext(null);
+export const useStoreContext = () => useContext(StoreContext);
 
-export const useStoreContext = () => useContext(StoreContext)
-
+// Fetch wrapper for products
 export const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,20 +24,33 @@ export const useFetch = (url) => {
 export function StoreProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [address, setAddress] = useState([]);
-  const [loadingCart, setLoadingCart] = useState(false);
-  const [cartError, setCartError] = useState(null);
-  const [addressLoading, setAddressLoading] = useState(false);
-  const [addressError, setAddressError] = useState(null);
-
   const [wishlist, setWishlist] = useState([]);
-  const [loadingWishlist, setLoadingWishlist] = useState(false);
+  const [cartError, setCartError] = useState(null);
+  const [addressError, setAddressError] = useState(null);
   const [wishlistError, setWishlistError] = useState(null);
+  const [loadingCart, setLoadingCart] = useState(false);
+  const [addressLoading, setAddressLoading] = useState(false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   const {
     data: products,
     loading: loadingProducts,
     error: productsError,
   } = useFetch("https://plant-store-backend-two.vercel.app/products");
+
+  const fetchCart = async () => {
+    setLoadingCart(true);
+    try {
+      const response = await fetch("https://plant-store-backend-two.vercel.app/cart");
+      if (!response.ok) throw new Error("Failed to fetch cart");
+      const data = await response.json();
+      setCart(data || []);
+    } catch (error) {
+      setCartError(error.message);
+    } finally {
+      setLoadingCart(false);
+    }
+  };
 
   const fetchAddresses = async () => {
     setAddressLoading(true);
@@ -53,25 +66,24 @@ export function StoreProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
+  const fetchWishlist = async () => {
+    setLoadingWishlist(true);
+    try {
+      const response = await fetch("https://plant-store-backend-two.vercel.app/wishlist");
+      if (!response.ok) throw new Error("Failed to fetch wishlist");
+      const wishlistData = await response.json();
+      setWishlist(wishlistData || []);
+    } catch (error) {
+      setWishlistError(error.message);
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCartData = async () => {
-      setLoadingCart(true);
-      try {
-        const response = await fetch("https://plant-store-backend-two.vercel.app/cart");
-        if (!response.ok) throw new Error("Failed to fetch cart");
-        const cartData = await response.json();
-        setCart(cartData);
-      } catch (error) {
-        setCartError(error.message);
-      } finally {
-        setLoadingCart(false);
-      }
-    };
-    fetchCartData();
+    fetchCart();
+    fetchAddresses();
+    fetchWishlist();
   }, []);
 
   const addToCart = async (product, quantity = 1) => {
@@ -83,8 +95,10 @@ export function StoreProvider({ children }) {
       });
 
       if (!response.ok) throw new Error("Add to cart failed");
-      const result = await response.json();
-      setCart((prev) => [...prev, result]);
+      await response.json();
+
+      // ✅ FIX: Re-fetch cart so it includes full product info
+      await fetchCart();
     } catch (error) {
       setCartError(error.message);
     }
@@ -98,7 +112,7 @@ export function StoreProvider({ children }) {
       );
 
       if (!response.ok) throw new Error("Delete from cart failed");
-      setCart((prev) => prev.filter((item) => item._id !== cartItemId));
+      await fetchCart();
     } catch (error) {
       setCartError(error.message);
     }
@@ -116,19 +130,13 @@ export function StoreProvider({ children }) {
       );
 
       if (!response.ok) throw new Error("Update cart quantity failed");
-      const updatedItem = await response.json();
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item._id === cartItemId ? { ...item, quantity: updatedItem.quantity } : item
-        )
-      );
+      await response.json();
+      await fetchCart();
     } catch (error) {
       setCartError(error.message);
     }
   };
 
-  // Sequentially clear the cart
   const clearCart = async () => {
     try {
       for (const item of cart) {
@@ -138,7 +146,7 @@ export function StoreProvider({ children }) {
         );
         if (!response.ok) throw new Error("Failed to delete item from cart");
       }
-      setCart([]); // Clear local state after all deletes
+      setCart([]); // Clear state after all deletes
     } catch (error) {
       setCartError(error.message);
     }
@@ -199,24 +207,6 @@ export function StoreProvider({ children }) {
     }
   };
 
-  const fetchWishlist = async () => {
-    setLoadingWishlist(true);
-    try {
-      const response = await fetch("https://plant-store-backend-two.vercel.app/wishlist");
-      if (!response.ok) throw new Error("Failed to fetch wishlist");
-      const wishlistData = await response.json();
-      setWishlist(wishlistData || []);
-    } catch (error) {
-      setWishlistError(error.message);
-    } finally {
-      setLoadingWishlist(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchWishlist();
-  }, []);
-
   const addToWishlist = async (productId) => {
     try {
       const response = await fetch("https://plant-store-backend-two.vercel.app/wishlist", {
@@ -226,8 +216,7 @@ export function StoreProvider({ children }) {
       });
 
       if (!response.ok) throw new Error("Failed to add to wishlist");
-      const newItem = await response.json();
-      setWishlist((prev) => [...prev, newItem]);
+      await fetchWishlist();
     } catch (error) {
       setWishlistError(error.message);
     }
@@ -241,7 +230,7 @@ export function StoreProvider({ children }) {
       );
 
       if (!response.ok) throw new Error("Failed to delete wishlist item");
-      setWishlist((prev) => prev.filter((item) => item._id !== wishlistItemId));
+      await fetchWishlist();
     } catch (error) {
       setWishlistError(error.message);
     }
@@ -256,7 +245,6 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // NEW buyNow function for placing an immediate order for a product
   const buyNow = async ({ productId, quantity, addressId, totalAmount, orderDate }) => {
     try {
       const response = await fetch("https://plant-store-backend-two.vercel.app/orders", {
@@ -270,15 +258,11 @@ export function StoreProvider({ children }) {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Buy Now order failed");
-      }
-
-      const result = await response.json();
-      return result; // return order confirmation or order data
+      if (!response.ok) throw new Error("Buy Now order failed");
+      return await response.json();
     } catch (error) {
       console.error("Buy Now error:", error.message);
-      throw error; // let caller handle the error
+      throw error;
     }
   };
 
@@ -308,7 +292,7 @@ export function StoreProvider({ children }) {
         addToWishlist,
         removeFromWishlist,
         moveToCartFromWishlist,
-        buyNow, // Export buyNow here
+        buyNow,
       }}
     >
       {children}

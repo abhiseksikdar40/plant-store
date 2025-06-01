@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import useStoreContext from "../context/StoreContext";
 
 export default function CheckOut() {
-  const { cart, setCart, address } = useStoreContext();
+  const { cart, clearCart, address } = useStoreContext();
+
   const location = useLocation();
   const buyNowProduct = location.state?.product || null;
 
@@ -11,11 +12,16 @@ export default function CheckOut() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [orderItems, setOrderItems] = useState([]);
 
-  // Use cart items or single "Buy Now" product
-  const orderItems = buyNowProduct
-    ? [{ product: buyNowProduct, quantity: 1 }]
-    : cart;
+  useEffect(() => {
+    // Set order items depending on cart or buy now product
+    if (buyNowProduct) {
+      setOrderItems([{ product: buyNowProduct, quantity: 1 }]);
+    } else {
+      setOrderItems(cart);
+    }
+  }, [buyNowProduct, cart]);
 
   const totalAmount = orderItems.reduce(
     (sum, item) =>
@@ -59,12 +65,12 @@ export default function CheckOut() {
       }
 
       setOrderPlaced(true);
-
-      if (!buyNowProduct) {
-        setCart([]); // Clear only if from cart
-      }
-
       setSelectedAddressId("");
+
+      // Clear cart only if NOT Buy Now flow
+      if (!buyNowProduct) {
+        await clearCart(); // Assuming this clears cart both backend and frontend context
+      }
     } catch (err) {
       setError(err.message);
     } finally {
