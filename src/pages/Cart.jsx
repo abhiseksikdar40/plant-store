@@ -1,18 +1,25 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import useStoreContext from "../context/StoreContext";
 
 export default function Cart() {
-  const { cart, cartDelete, updateCartItemQuantity } = useStoreContext();
+  const {
+    cart,
+    cartDelete,
+    updateCartItemQuantity,
+    addToWishlist,
+    clearCart, // Clear cart function from context
+  } = useStoreContext();
 
-  
+  const navigate = useNavigate();
+
   const safeNumber = (num) => (typeof num === "number" && !isNaN(num) ? num : 0);
-
 
   const totalPrice = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
     const quantity = safeNumber(item.quantity);
     return sum + price * quantity;
   }, 0);
-
 
   const totalDiscount = cart.reduce((sum, item) => {
     const price = safeNumber(item.product?.productPrice);
@@ -21,10 +28,14 @@ export default function Cart() {
     return sum + price * quantity * (discountPercent / 100);
   }, 0);
 
-  // Fixed delivery charges
   const delivery = 5;
-
   const finalAmount = totalPrice - totalDiscount + delivery;
+
+  // Clear cart and navigate to checkout
+  const handleCheckout = () => {
+    clearCart();     // Clear the cart
+    navigate("/checkout");  // Go to checkout page
+  };
 
   return (
     <div style={{ backgroundColor: "#e6f1f1" }}>
@@ -93,6 +104,10 @@ export default function Cart() {
                             <button
                               className="btn btn-outline-primary mt-2"
                               style={{ borderRadius: "0px", width: "255px" }}
+                              onClick={() => {
+                                addToWishlist(item.product._id);
+                                cartDelete(item._id);
+                              }}
                             >
                               Move To Wishlist
                             </button>
@@ -132,9 +147,11 @@ export default function Cart() {
               <h4>Total Amount</h4>
               <h4>${finalAmount.toFixed(2)}</h4>
             </div>
+
             <button
-              style={{ backgroundColor: "#19a448", border: "none" }}
               className="btn text-white mt-3 w-100"
+              style={{ backgroundColor: "#19a448", border: "none" }}
+              onClick={handleCheckout}
             >
               Proceed To Checkout
             </button>

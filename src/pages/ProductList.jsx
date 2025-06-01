@@ -10,7 +10,6 @@ export default function ProductList() {
     const [sortedData, setSortedData] = useState([])
     const [selectedCategories, setSelectedCategories] = useState([])
 
-    console.log(data)
     const clearSelect = (e) => {
         e.preventDefault();
         setSortOption("Price -- Low to High");
@@ -19,13 +18,13 @@ export default function ProductList() {
 
     const sortProducts = (sortOption, products, selectedCategories) => {
         let sorted = [...products];
-    
+
         // filter by category
         if (selectedCategories.length > 0) {
             sorted = sorted.filter(product => selectedCategories.includes(product.productCategory));
         }
-    
-        // sort by price
+
+        // sort by price or popularity
         if (sortOption === "Price -- Low to High") {
             sorted.sort((a, b) => a.productPrice - b.productPrice);
         } else if (sortOption === "Price -- High to Low") {
@@ -33,10 +32,9 @@ export default function ProductList() {
         } else if (sortOption === "Popularity") {
             sorted.sort((a, b) => b.productRating - a.productRating);
         }
-    
+
         return sorted;
     };
-    
 
     useEffect(() => {
         if (data) {
@@ -62,8 +60,7 @@ export default function ProductList() {
         <>
         {loading ? (
             <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
-                <div className="spinner-border text-success" style={{ width: "3rem", height: "3rem" }}>
-                </div>
+                <div className="spinner-border text-success" style={{ width: "3rem", height: "3rem" }}></div>
                 <span className='px-2'>Loading...</span>
             </div>
         ) : (
@@ -154,8 +151,23 @@ export default function ProductList() {
                                             </Link>
                                             <p className="card-text">${product.productPrice}</p>
                                             <div className="d-flex justify-content-between">
-                                                <Link className='btn btn-success'>Buy Now</Link>
-                                                <button className='btn btn-warning' onClick={() => addToCart(product)}>Add To Cart</button>
+                                                {/* Pass product info in Link state */}
+                                                <Link
+                                                    to="/checkout"
+                                                    className="btn btn-success"
+                                                    state={{ product }}
+                                                >
+                                                    Buy Now
+                                                </Link>
+                                                <button
+                                                    className="btn btn-warning"
+                                                    onClick={() => {
+                                                        addToCart(product);
+                                                        alert(`${product.productName} added to cart!`);
+                                                    }}
+                                                >
+                                                    Add To Cart
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

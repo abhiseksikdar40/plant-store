@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import ProductList from './pages/ProductList';
 import Product from './pages/Product';
 import { StoreProvider } from './context/StoreContext';
+import CheckOut from './pages/CheckOut';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/user" element={<User />} />
         <Route path='/productsList' element={<ProductList />} />
         <Route path='/productsList/:productId' element={<Product />}/>
+        <Route path='/checkout' element={<CheckOut />}/>
       </Routes>
       <Footer />
     </BrowserRouter>
