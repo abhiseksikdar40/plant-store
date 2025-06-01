@@ -1,4 +1,4 @@
-import { useStoreContext } from "../context/StoreContext"; // adjust path if needed
+import  useStoreContext  from "../context/StoreContext";
 
 export default function WishlistCounter() {
   const { wishlist } = useStoreContext();
